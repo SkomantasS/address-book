@@ -27,4 +27,4 @@ All linked list code part must be stored in a separate .c file.
 
 All of your code must be stored in a github repository. Also, you can use other git services provider. 
 
-The user must be provided with an interactive menu which will be used for the user to interact with the program and execute different actions. 
+The user must be provided with an interactive menu which will be used for the user to interact with the program and execute different actions.
