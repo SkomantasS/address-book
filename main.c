@@ -180,12 +180,15 @@ int main(void)
             switch (error) {
             case 0 :
                 printf("\n%s %s %s %s\n\n",temp->name,temp->surname,temp->email,temp->number);
+                error = 0;
                 break;
             case 1 :
                 printf("\nTrait not found\n\n");
+                error = 0;
                 break;
             case 3 :
                 printf("\nList is empty\n\n");
+                error = 0;
                 break;
             }
             break;
