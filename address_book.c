@@ -184,16 +184,19 @@ struct Person* person_at_pos(struct Person **list, int pos_nr, int *error)
         *error = 3; //how to handle
     struct Person *temp = *list;
     for (int i = 1; i < pos_nr; i++) {
-        if (temp->next != NULL)
+        if (temp->next != NULL){
             temp = temp->next;
-        if ((temp->next == NULL) && (i<pos_nr-1))
+        } else if (i < pos_nr) {
             *error = 1;
+        }
     }
     return(temp);
 }
 
 struct Person* person_by_trait(struct Person **list, char *trait, int trait_nr, int *error)
 {
+    if (*list == NULL)
+        *error = 3;
     struct Person *temp = *list;
     switch(trait_nr) {
     case 1:
@@ -202,6 +205,8 @@ struct Person* person_by_trait(struct Person **list, char *trait, int trait_nr, 
                 break;
             temp = temp->next;
         }
+        if (strcmp(temp->name,trait) != 0)
+            *error = 1;
         break;
     case 2:
         while ((temp->next) != NULL) {
@@ -209,6 +214,8 @@ struct Person* person_by_trait(struct Person **list, char *trait, int trait_nr, 
                 break;
             temp = temp->next;
         }
+        if (strcmp(temp->surname,trait) != 0)
+            *error = 1;
         break;
     case 3:
         while ((temp->next) != NULL) {
@@ -216,6 +223,8 @@ struct Person* person_by_trait(struct Person **list, char *trait, int trait_nr, 
                 break;
             temp = temp->next;
         }
+        if (strcmp(temp->email,trait) != 0)
+            *error = 1;
         break;
     case 4:
         while ((temp->next) != NULL) {
@@ -223,6 +232,8 @@ struct Person* person_by_trait(struct Person **list, char *trait, int trait_nr, 
                 break;
             temp = temp->next;
         }
+        if (strcmp(temp->number,trait) != 0)
+            *error = 1;
         break;
     }
     return(temp);

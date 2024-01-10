@@ -56,7 +56,7 @@ int main(void)
         printf("Enter 'f' to print a list item at a defined position\n");
         printf("Enter 'g' to search for a list item by trait and print it\n");
         printf("Enter 'q' to quit\n\n");
-        fscanf(stdin, " %[^\n]", user_input);
+        fscanf(stdin, " %127[^\n]", user_input);
 
         char first_letter = user_input[0];
 
@@ -170,10 +170,24 @@ int main(void)
                 printf("Enter phone number: ");
                 break;
             }
-            fscanf(stdin, " %[^\n]s", &name[0]);
+            fscanf(stdin, " %29[^\n]s", &name[0]);
             // printf("%s",name);
-            temp = person_by_trait(&list, &name[0] ,trait_nr, &error);
-            printf("\n%s %s %s %s\n\n",temp->name,temp->surname,temp->email,temp->number);
+            if (list == NULL){
+                error = 3;
+            } else {
+                temp = person_by_trait(&list, &name[0] ,trait_nr, &error);
+            }
+            switch (error) {
+            case 0 :
+                printf("\n%s %s %s %s\n\n",temp->name,temp->surname,temp->email,temp->number);
+                break;
+            case 1 :
+                printf("\nTrait not found\n\n");
+                break;
+            case 3 :
+                printf("\nList is empty\n\n");
+                break;
+            }
             break;
         case 'q':
             run = 0;
