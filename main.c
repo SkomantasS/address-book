@@ -41,11 +41,11 @@ int main(void)
     address_file = fopen(address_file_path, "r");
 
     if( address_file == NULL) {
-        printf("Unable to open file\n");
-        exit(1);
+        printf("Unable to open file\nProceding with an empty list\n");
     }
-    load_addresses(address_file, &list); //uzloadinam adresus is failo
-    
+    if( address_file != NULL) {
+        load_addresses(address_file, &list); //uzloadinam adresus is failo
+    }
     while(run == 1){
         char user_input[128];
         printf("Enter 'a' to print list\n");
@@ -77,16 +77,21 @@ int main(void)
             printf("position: ");
             fscanf(stdin, " %i", &pos_nr);
             add_to_list_nr(&list,create_node(name, surname, email, number), pos_nr, &error);
-            printf("\nAdded\n\n");
             switch(error) {
-            case 1:
+            case 0 :
+                printf("\nAdded\n\n");
+                break;
+            case 1 :
                 printf("\nPosition does not exist (too high)\n\n");
                 error = 0;
                 break;
-            case 2:
+            case 2 :
                 printf("\nPosition does not exist (too low)\n\n");
                 error = 0;
                 break;
+            case 3 :
+                printf("\nList is empty, adding at position 1\n\n");
+                error = 0;
             }
             // print_list(list);
             break;
@@ -94,14 +99,20 @@ int main(void)
             printf("Delete position: ");
             fscanf(stdin, " %i", &pos_nr);
             delete_from_list_nr(&list, pos_nr, &error);
-            printf("\nDeleted\n\n");
             switch(error) {
+            case 0 :
+                printf("\nDeleted\n\n");
+                break;
             case 1 :
                 printf("\nPosition does not exist (too high)\n\n");
                 error = 0;
                 break;
             case 2 :
                 printf("\nPosition does not exist (too low)\n\n");
+                error = 0;
+                break;
+            case 3 :
+                printf("\nList is empty\n\n");
                 error = 0;
                 break;
             }
@@ -113,9 +124,13 @@ int main(void)
             // print_list(list);
             break;
         case 'f':
-            printf("Print position: ");
-            fscanf(stdin, " %i", &pos_nr);
-            temp = person_at_pos(&list, pos_nr, &error);
+            if(list == NULL){
+                error = 3;
+            } else {
+                printf("Print position: ");
+                fscanf(stdin, " %i", &pos_nr);
+                temp = person_at_pos(&list, pos_nr, &error);
+            }
             switch(error) {
             case 0:
                 printf("\n%s %s %s %s\n\n",temp->name,temp->surname,temp->email,temp->number);
@@ -126,6 +141,10 @@ int main(void)
                 break;
             case 2:
                 printf("\nPosition does not exist (too low)\n\n");
+                error = 0;
+                break;
+            case 3 :
+                printf("\nList is empty\n\n");
                 error = 0;
                 break;
             }

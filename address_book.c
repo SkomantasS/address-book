@@ -117,13 +117,23 @@ void add_to_list_nr(struct Person **list, struct Person *person, int pos_nr, int
         *error = 2;
         return;
     }
+    if (*list == NULL) {
+        *error = 3;
+        *list = person;
+        return; 
+    }
     struct Person *temp = *list;
+    if (pos_nr == 1) {
+        person->next = *list;
+        *list = person;
+        return;
+    }
     for (int i = 2; i < pos_nr; i++) {
-        if (temp->next != NULL)
+        if (temp->next != NULL){
             temp = temp->next;
-        if ((temp->next == NULL) && (i<pos_nr-1)){
+        }else if (i<pos_nr) {
             *error = 1;
-            return;
+            return; 
         }
     }
     if (*error == 0) {
@@ -135,9 +145,13 @@ void add_to_list_nr(struct Person **list, struct Person *person, int pos_nr, int
 void delete_from_list_nr(struct Person **list, int pos_nr, int *error)
 {
     *error = 0;
-    if (pos_nr<=0) {
+    if (pos_nr <= 0) {
         *error = 2;
         return;
+    }
+    if (*list == NULL) {
+        *error = 3;
+        return; 
     }
     struct Person *temp = *list;
     if (pos_nr == 1) {
@@ -146,15 +160,15 @@ void delete_from_list_nr(struct Person **list, int pos_nr, int *error)
         return;
     }
     for (int i = 2; i < pos_nr; i++) {
-        if (temp->next != NULL)
+        if (temp->next->next != NULL){
             temp = temp->next;
-        if ((temp->next == NULL) && (i<pos_nr)){
+        }else if (i < pos_nr) {
             *error = 1;
-            return;
+            return; 
         }
     }
     if (*error == 0){
-        struct Person *to_delete = (temp->next);
+        struct Person *to_delete = (temp);
         temp->next = temp->next->next;
         temp = temp->next;
         free(to_delete);
@@ -164,8 +178,10 @@ void delete_from_list_nr(struct Person **list, int pos_nr, int *error)
 struct Person* person_at_pos(struct Person **list, int pos_nr, int *error)
 {
     *error = 0;
-    if (pos_nr<=0)
+    if (pos_nr <= 0)
         *error = 2;
+    if (*list == NULL)
+        *error = 3; //how to handle
     struct Person *temp = *list;
     for (int i = 1; i < pos_nr; i++) {
         if (temp->next != NULL)
