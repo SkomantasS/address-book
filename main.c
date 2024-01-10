@@ -195,7 +195,7 @@ int main(void)
         case 'q':
             run = 0;
         }
-    } 
+    }
     delete_list(&list);
     fclose(address_file);
     return 0;

@@ -159,6 +159,7 @@ void delete_from_list_nr(struct Person **list, int pos_nr, int *error)
         free(temp);  
         return;
     }
+
     for (int i = 2; i < pos_nr; i++) {
         if (temp->next->next != NULL){
             temp = temp->next;
@@ -167,10 +168,10 @@ void delete_from_list_nr(struct Person **list, int pos_nr, int *error)
             return; 
         }
     }
+
     if (*error == 0){
-        struct Person *to_delete = (temp);
+        struct Person *to_delete = (temp->next);
         temp->next = temp->next->next;
-        temp = temp->next;
         free(to_delete);
     }
 }
