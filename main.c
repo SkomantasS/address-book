@@ -5,40 +5,13 @@
 #include <signal.h>
 #include <unistd.h>
 #include "address_book.h"
+#include "input_handling.h"
 
 struct Person *list = NULL;
 FILE *address_file = NULL;
 
-void sig_handler(int signum){
-    delete_list(&list);
-    fclose(address_file);
-    exit(0);
-}
-
-void error_handler(char *success,int *error){
-    switch(*error) {
-    case 0 :
-        if (success != "")
-            printf("\n%s\n\n",success);
-        break;
-    case 1 :
-        printf("\nPosition does not exist (too high)\n\n");
-        *error = 0;
-        break;
-    case 2 :
-        printf("\nPosition does not exist (too low)\n\n");
-        *error = 0;
-        break;
-    case 3 :
-        printf("\nList is empty\n\n");
-        *error = 0;
-        break;
-    case 4 :
-        printf("\nTrait not found\n\n");
-        *error = 0;
-        break;
-    }
-}
+void sig_handler(int signum);
+void error_handler(char *success,int *error);
 
 int main(void)
 {
@@ -46,9 +19,8 @@ int main(void)
     signal(SIGQUIT,sig_handler);
     char name[DAT_LEN];
     char surname[DAT_LEN];
-    char email[DAT_LEN];
+    char email[DAT_LEN*2];
     char number[DAT_LEN];
-    struct Person *temp = NULL;
     int pos_nr;
     int trait_nr;
     bool run = 1;
@@ -90,21 +62,21 @@ int main(void)
             print_list(list);
             break;
         case 'b':
-            input_person_data(&name[0],&surname[0],&email[0],&number[0],DAT_LEN);
+            input_person_data(&name[0],&surname[0],&email[0],&number[0]);
             add_to_list(&list,create_node(name, surname, email, number));
             printf("\nAdded\n\n");
             break;
         case 'c':
-            input_person_data(&name[0],&surname[0],&email[0],&number[0],DAT_LEN);
+            input_person_data(&name[0],&surname[0],&email[0],&number[0]);
             printf("position: ");
             fscanf(stdin, " %i", &pos_nr);
-            add_to_list_nr(&list,create_node(name, surname, email, number), pos_nr, &error);
+            error = add_to_list_nr(&list,create_node(name, surname, email, number), pos_nr);
             error_handler("Added",&error);
             break;
         case 'd':
             printf("Delete position: ");
             fscanf(stdin, " %i", &pos_nr);
-            delete_from_list_nr(&list, pos_nr, &error);
+            error = delete_from_list_nr(&list, pos_nr);
             error_handler("Deleted",&error);
             break;
         case 'e':
@@ -114,12 +86,12 @@ int main(void)
         case 'f':
             printf("Print position: ");
             fscanf(stdin, " %i", &pos_nr);
-            person_at_pos(&list, pos_nr, &error);
+            error = person_at_pos(&list, pos_nr);
             error_handler("",&error);
             break;
         case 'g' :
             input_search_querry(&name[0],&trait_nr);
-            person_by_trait(&list, &name[0] ,trait_nr, &error);
+            error = person_by_trait(&list, &name[0] ,trait_nr);
             error_handler("",&error);
             break;
         case 'q':
@@ -129,4 +101,35 @@ int main(void)
     delete_list(&list);
     fclose(address_file);
     return 0;
+}
+
+void sig_handler(int signum){
+    delete_list(&list);
+    fclose(address_file);
+    exit(0);
+}
+
+void error_handler(char *success,int *error){
+    switch(*error) {
+    case 0 :
+        if (strcmp(success,"") != 0)
+            printf("\n%s\n\n",success);
+        break;
+    case 75 :
+        printf("\nPosition does not exist (too high)\n\n");
+        *error = 0;
+        break;
+    case -2 :
+        printf("\nPosition does not exist (too low)\n\n");
+        *error = 0;
+        break;
+    case -3 :
+        printf("\nList is empty\n\n");
+        *error = 0;
+        break;
+    case -4 :
+        printf("\nTrait not found\n\n");
+        *error = 0;
+        break;
+    }
 }
