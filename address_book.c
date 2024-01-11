@@ -1,18 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 #include "address_book.h"
-#define DELIMETER ","
-#define DAT_LEN 30
 
-struct Person {
-    char name[DAT_LEN];
-    char surname[DAT_LEN];
-    char email[DAT_LEN];
-    char number[DAT_LEN];
-    struct Person *next;
-};
+static char* return_trait_by_trait_nr(struct Person *person, int trait_nr)
+{
+    switch (trait_nr) {
+    case 1 :
+        return(person->name);
+        break;
+    case 2 :
+        return(person->surname);
+        break;
+    case 3 :
+        return(person->email);
+        break;
+    case 4 :
+        return(person->number);
+        break;
+    }
+}
+
+static void removeNewLineChar(char *ptr)
+{
+    while((ptr != NULL) && (*ptr != '\n'))
+    {
+        ++ptr;
+    }
+    *ptr = '\0';
+}
 
 void load_addresses(FILE *file, struct Person **list)
 {
@@ -97,16 +113,54 @@ void delete_list(struct Person **list)
     }
 }
 
+void input_search_querry(char *name, int *trait_nr)
+{
+    int c;
+    printf("Enter '1' to search by name\n");
+    printf("Enter '2' to search by surname\n");
+    printf("Enter '3' to search by email\n");
+    printf("Enter '4' to search by phone number\n\n");
+    *trait_nr = 0;
+    while ((*trait_nr > 4) || (*trait_nr < 1)){
+        fscanf(stdin, " %i", trait_nr);
+        while ((c = getchar()) != '\n' && c != EOF); //stdin flush
+        printf("\n");
+        switch (*trait_nr) {
+        case 1 :
+            printf("Enter name: ");
+            break;
+        case 2 :
+            printf("Enter surname: ");
+            break;
+        case 3 :
+            printf("Enter email: ");
+            break;
+        case 4 :
+            printf("Enter phone number: ");
+            break;
+        default :
+            printf("Invalid input, try again:");
+        }
+    }
+    fscanf(stdin, " %29[^\n]s", &name[0]);
+    while ((c = getchar()) != '\n' && c != EOF); //stdin flush
+}
+
 void input_person_data(char *name, char *surname, char *email, char *number, int buf_sz)
 {
+    int c;
     printf("name: "); //how to use buf_sz variable
     scanf(" %29[^\n]s", name);
+    while ((c = getchar()) != '\n' && c != EOF); //stdin flush
     printf("surname: ");
     scanf(" %29[^\n]s", surname);
+    while ((c = getchar()) != '\n' && c != EOF); //stdin flush
     printf("email: ");
     scanf(" %29[^\n]s", email);
+    while ((c = getchar()) != '\n' && c != EOF); //stdin flush
     printf("phone number: ");
     scanf(" %29[^\n]s", number);
+    while ((c = getchar()) != '\n' && c != EOF); //stdin flush
     printf("\n");
 }
 
@@ -159,7 +213,6 @@ void delete_from_list_nr(struct Person **list, int pos_nr, int *error)
         free(temp);  
         return;
     }
-
     for (int i = 2; i < pos_nr; i++) {
         if (temp->next->next != NULL){
             temp = temp->next;
@@ -168,7 +221,6 @@ void delete_from_list_nr(struct Person **list, int pos_nr, int *error)
             return; 
         }
     }
-
     if (*error == 0){
         struct Person *to_delete = (temp->next);
         temp->next = temp->next->next;
@@ -176,75 +228,53 @@ void delete_from_list_nr(struct Person **list, int pos_nr, int *error)
     }
 }
 
-struct Person* person_at_pos(struct Person **list, int pos_nr, int *error)
+void person_at_pos(struct Person **list, int pos_nr, int *error)
 {
     *error = 0;
-    if (pos_nr <= 0)
+    if (pos_nr <= 0){
         *error = 2;
-    if (*list == NULL)
+        return;
+    }
+    if (*list == NULL){
         *error = 3; //how to handle
+        return;
+    }
     struct Person *temp = *list;
     for (int i = 1; i < pos_nr; i++) {
         if (temp->next != NULL){
             temp = temp->next;
         } else if (i < pos_nr) {
             *error = 1;
+            return;
         }
     }
-    return(temp);
+    printf("\n%s %s %s %s\n\n",temp->name,temp->surname,temp->email,temp->number);
+    return;
 }
 
-struct Person* person_by_trait(struct Person **list, char *trait, int trait_nr, int *error)
+void person_by_trait(struct Person **list, char *trait, int trait_nr, int *error)
 {
-    if (*list == NULL)
+    if (*list == NULL){
         *error = 3;
+        return;
+    }
+    int ptr_ls_cur = 0;
     struct Person *temp = *list;
-    switch(trait_nr) {
-    case 1:
-        while ((temp->next) != NULL) {
-            if (strcmp(temp->name,trait)==0)
-                break;
-            temp = temp->next;
+    char *to_compare_with = NULL;
+    printf("\n");
+    while ((temp->next) != NULL) {
+        to_compare_with = return_trait_by_trait_nr(temp,trait_nr);
+        if (strcmp(to_compare_with,trait) == 0){
+            printf("%s %s %s %s\n",temp->name,temp->surname,temp->email,temp->number);
+            ptr_ls_cur++;
         }
-        if (strcmp(temp->name,trait) != 0)
-            *error = 1;
-        break;
-    case 2:
-        while ((temp->next) != NULL) {
-            if (strcmp(temp->surname,trait)==0)
-                break;
-            temp = temp->next;
-        }
-        if (strcmp(temp->surname,trait) != 0)
-            *error = 1;
-        break;
-    case 3:
-        while ((temp->next) != NULL) {
-            if (strcmp(temp->email,trait)==0)
-                break;
-            temp = temp->next;
-        }
-        if (strcmp(temp->email,trait) != 0)
-            *error = 1;
-        break;
-    case 4:
-        while ((temp->next) != NULL) {
-            if (strcmp(temp->number,trait)==0)
-                break;
-            temp = temp->next;
-        }
-        if (strcmp(temp->number,trait) != 0)
-            *error = 1;
-        break;
+        temp = temp->next;
     }
-    return(temp);
-}
-
-void removeNewLineChar(char *ptr)
-{
-    while((ptr != NULL) && (*ptr != '\n'))
-    {
-        ++ptr;
+    if (strcmp(to_compare_with,trait) == 0) {
+        printf("%s %s %s %s\n",temp->name,temp->surname,temp->email,temp->number);
+    } else if (ptr_ls_cur == 0){
+        *error = 4;
     }
-    *ptr = '\0';
+    printf("\n");
+    return;
 }
