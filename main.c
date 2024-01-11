@@ -10,7 +10,7 @@
 struct Person *list = NULL;
 FILE *address_file = NULL;
 
-void sig_handler(int signum);
+void sig_handler();
 void error_handler(char *success,int *error);
 
 int main(void)
@@ -103,7 +103,7 @@ int main(void)
     return 0;
 }
 
-void sig_handler(int signum){
+void sig_handler(){
     delete_list(&list);
     fclose(address_file);
     exit(0);
