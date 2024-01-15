@@ -8,6 +8,7 @@ CFLAGS := -Wall -Wextra -std=c99 -g -fPIC
 all: $(OBJ)
 
 $(OBJ):%.o: %.c
+	mkdir -p $(BLD_DIR)
 	$(CC) -I$(INC_DIR) -c $(CFLAGS) $< -o $(BLD_DIR)/$@
 
 .PHONY: clean

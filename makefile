@@ -14,6 +14,7 @@ lib_name := address_book
 all:$(BIN)
 
 $(BIN):builddeps
+	mkdir -p $(BIN_DIR)
 	$(CC) -Wl,-rpath=$(PWD)/$(LIB_DIR) $(CFLAGS) -I$(INC_DIR) -L$(LIB_DIR) $(BLD_DIR)/*.o -l$(lib_name) -o $(BIN_DIR)/$@
 
 .PHONY: builddeps
