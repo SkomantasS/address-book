@@ -8,15 +8,15 @@ LIB_DIR := ./lib
 PWD := $(shell pwd)
 SRC_DIR := ./src
 
-lib_name := address_book
+lib_names := address_book
 
 .PHONY: all
 all:$(BIN_DIR)/$(BIN)
 
 $(BIN_DIR)/$(BIN):builddeps
 	mkdir -p $(BIN_DIR)
-	$(CC) -Wl,-rpath=$(PWD)/$(LIB_DIR) $(CFLAGS) -I$(INC_DIR) -L$(LIB_DIR) $(BLD_DIR)/*.o -l$(lib_name) -o $@
-
+	$(CC)  $(CFLAGS) -I$(INC_DIR) -o $@ -L$(LIB_DIR) $(BLD_DIR)/*.o -l$(lib_names)
+#-Wl,-rpath=$(PWD)/$(LIB_DIR)
 .PHONY: builddeps
 builddeps:
 	cd $(SRC_DIR) && $(MAKE)

@@ -1,21 +1,23 @@
-lib_names := address_book.so input_handling.so
+lib_names := address_book.so
 INC_DIR := ../inc
 BLD_DIR := ../build
 SRC_DIR := ../src
 
-OBJ := $(lib_names:%.so=$(BLD_DIR)/%.o)
+CFLAGS := -Wall -Wextra -std=c99 -g -fPIC
+
+OBJ := $(lib_names:%.so=%.o)
 
 lib_names := $(lib_names:%.so=lib%.so)
 
 .PHONY: all
 all: $(lib_names)
 
-$(lib_names):lib%.so : $(BLD_DIR)/%.o
+$(lib_names):lib%.so : %.o
 	$(CC) -shared -o $@ $<
 
-$(OBJ):
-	cd $(SRC_DIR) && $(MAKE)
+$(OBJ):%.o:$(SRC_DIR)/%.c
+	$(CC) -I$(INC_DIR) -c $(CFLAGS) $< -o $@
 
 .PHONY: clean
 clean:
-	$(RM) $(lib_names)
+	$(RM) $(lib_names) $(OBJ)

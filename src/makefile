@@ -1,8 +1,10 @@
-SRC := $(shell find -name '*.c')
+lib_names := address_book.so
+
+SRC := $(shell find -name '*.c' -not -name '$(lib_names:%.so=%.c)')
 OBJ := $(SRC:%.c=%.o)
 INC_DIR := ../inc
 BLD_DIR := ../build
-CFLAGS := -Wall -Wextra -std=c99 -g -fPIC
+CFLAGS := -Wall -Wextra -std=c99 -g
 
 OBJ := $(OBJ:%.o=$(BLD_DIR)/%.o)
 
