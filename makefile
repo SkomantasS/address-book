@@ -11,17 +11,16 @@ SRC_DIR := ./src
 lib_name := address_book
 
 .PHONY: all
-all:$(BIN)
+all:$(BIN_DIR)/$(BIN)
 
-$(BIN):builddeps
+$(BIN_DIR)/$(BIN):builddeps
 	mkdir -p $(BIN_DIR)
-	$(CC) -Wl,-rpath=$(PWD)/$(LIB_DIR) $(CFLAGS) -I$(INC_DIR) -L$(LIB_DIR) $(BLD_DIR)/*.o -l$(lib_name) -o $(BIN_DIR)/$@
+	$(CC) -Wl,-rpath=$(PWD)/$(LIB_DIR) $(CFLAGS) -I$(INC_DIR) -L$(LIB_DIR) $(BLD_DIR)/*.o -l$(lib_name) -o $@
 
 .PHONY: builddeps
 builddeps:
 	cd $(SRC_DIR) && $(MAKE)
 	cd $(LIB_DIR) && $(MAKE)
-
 
 .PHONY: clean
 clean:

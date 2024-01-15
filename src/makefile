@@ -4,13 +4,15 @@ INC_DIR := ../inc
 BLD_DIR := ../build
 CFLAGS := -Wall -Wextra -std=c99 -g -fPIC
 
+OBJ := $(OBJ:%.o=$(BLD_DIR)/%.o)
+
 .PHONY: all
 all: $(OBJ)
 
-$(OBJ):%.o: %.c
+$(OBJ): $(BLD_DIR)/%.o: %.c
 	mkdir -p $(BLD_DIR)
-	$(CC) -I$(INC_DIR) -c $(CFLAGS) $< -o $(BLD_DIR)/$@
+	$(CC) -I$(INC_DIR) -c $(CFLAGS) $< -o $@
 
 .PHONY: clean
 clean:
-	cd $(BLD_DIR) && $(RM) $(OBJ)
+	$(RM) $(OBJ)
