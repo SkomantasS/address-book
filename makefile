@@ -15,8 +15,8 @@ all:$(BIN_DIR)/$(BIN)
 
 $(BIN_DIR)/$(BIN):builddeps
 	mkdir -p $(BIN_DIR)
-	$(CC)  $(CFLAGS) -I$(INC_DIR) -o $@ -L$(LIB_DIR) $(BLD_DIR)/*.o -l$(lib_names)
-#-Wl,-rpath=$(PWD)/$(LIB_DIR)
+	$(CC)  $(CFLAGS) -I$(INC_DIR) -o $@ $(BLD_DIR)/*.o -L$(LIB_DIR) -l$(lib_names)
+
 .PHONY: builddeps
 builddeps:
 	cd $(SRC_DIR) && $(MAKE)
