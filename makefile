@@ -22,9 +22,11 @@ builddeps:
 	cd $(SRC_DIR) && $(MAKE)
 	cd $(LIB_DIR) && $(MAKE)
 
+.PHONY: install
 install:$(BIN_DIR)/$(BIN)
 	cp -f $(LIB_DIR)/lib$(lib_names).so /usr/lib
 
+.PHONY: uninstall
 uninstall:
 	rm -f /usr/lib/lib$(lib_names).so
 
